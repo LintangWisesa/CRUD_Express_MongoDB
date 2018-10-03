@@ -6,11 +6,11 @@ var url =
 // fungsi untuk konek ke db expmongo
 x.connect(url, (error, db)=>{
     console.log('Sukses terhubung!')
-    hapus(db)
+    hapus(db) // panggil fungsi transaksi data
 })
 
 // fungsi untuk input data
-var input = (db) => {
+var inputData = (db) => {
     var col = db.collection('datamongo')
     col.insertMany([
         {nama: 'Euis', usia: 23, kota: 'Sukabumi'}
@@ -21,15 +21,34 @@ var input = (db) => {
 }
 
 // fungsi untuk ambil semua data
-var ambil = (db) => {
+var ambilSemua = (db) => {
+    var col = db.collection('datamongo')
+    col.find({}).toArray((er, data)=>{
+        console.log(data)
+    })
+}
+
+// fungsi untuk ambil data tertentu
+var ambilSatu = (db) => {
     var col = db.collection('datamongo')
     col.find({usia: {$gt:22}}).toArray((er, data)=>{
         console.log(data)
     })
 }
 
-//  fungsi edit all data
-var edit = (db)=>{
+//  fungsi edit data pertama yg mmnuhi syarat
+var editSatu = (db)=>{
+    var col = db.collection('datamongo')
+    col.updateOne(
+        {nama:'Andi'}, 
+        {$set: {kota:'Surabaya'}},
+        (error, hasil)=>{
+            console.log(hasil)
+        })
+}
+
+//  fungsi edit semua data yg mmnuhi syarat
+var editSemua = (db)=>{
     var col = db.collection('datamongo')
     col.update(
         {nama:'Deni'}, 
@@ -40,7 +59,16 @@ var edit = (db)=>{
         })
 }
 
-// remove data by id
+// hapus satu data tertentu
+const hapusData = function(db, callback) {
+    const collection = db.collection('karyawan');
+    collection.deleteOne({nama:'Budi'}, (err, out) => {
+      console.log("Data sukses dihapus!");
+      callback(out);
+    }); 
+}
+  
+// hapus satu data by id
 var hapus = (db) => {
     var col = db.collection('datamongo')
     col.remove(
